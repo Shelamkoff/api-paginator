@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace Bermuda\Paginator;
 
 use Bermuda\Utils\URL;
 
