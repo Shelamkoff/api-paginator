@@ -14,6 +14,11 @@ class Paginator
         private array $queryParams = []
     ){
     }
+    
+    public static function createEmpty(): self
+    {
+        return new static([], 0);
+    }
 
     /**
      * @param string $url
