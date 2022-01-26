@@ -1,5 +1,5 @@
 {
-    "name": "bermudaphp/utils",
+    "name": "bermudaphp/paginator",
     "type": "library",
     "license": "MIT",
     "require": {
