@@ -66,6 +66,10 @@ class Paginator
      */
     public function paginate(array $mergeData = null): array
     {
+        if ($this->results == []) {
+            return [];
+        }
+        
         $data = [
             'count'   => $this->resultsCount,
             'prev'    => $this->getPrevUrl(),
