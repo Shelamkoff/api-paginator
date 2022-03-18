@@ -3,7 +3,8 @@
     "type": "library",
     "license": "MIT",
     "require": {
-        "php": "^7.4|^8.0|^8.1"
+        "php": "^7.4|^8.0|^8.1",
+        "bermudaphp/arrayable": "^1.2.2"
     },
     "autoload": {
         "psr-4": {
