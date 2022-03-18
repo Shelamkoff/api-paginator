@@ -2,9 +2,10 @@
 
 namespace Bermuda\Paginator;
 
+use Bermuda\Arrayable;
 use Bermuda\Utils\URL;
 
-class Paginator
+class Paginator implements Arrayable
 {
     private ?string $url = null;
 
@@ -41,6 +42,14 @@ class Paginator
     }
 
     /**
+     * @return bool
+     */
+    public function emptyResults(): bool
+    {
+        return $this->results === [];
+    }
+
+    /**
      * @param array $queryParams
      * @return $this
      */
@@ -58,6 +67,14 @@ class Paginator
     {
         $this->resultsCount = $resultsCount;
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return $this->paginate();
     }
 
     /**
