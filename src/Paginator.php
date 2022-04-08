@@ -170,7 +170,7 @@ class Paginator implements Arrayable
     private function buildUrl(array $queryParams): string
     {
         if ($this->url === null) {
-            return URL::build(['params' => $queryParams]);
+            return URL::createFromServer(['query' => $queryParams]);
         }
 
         return $this->url . ($queryParams != [] ? '?' . http_build_query($queryParams) : '');
