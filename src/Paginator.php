@@ -3,7 +3,7 @@
 namespace Bermuda\Paginator;
 
 use Bermuda\Arrayable;
-use Bermuda\Utils\URL;
+use Bermuda\Utils\Url;
 
 class Paginator implements Arrayable
 {
@@ -170,7 +170,7 @@ class Paginator implements Arrayable
     private function buildUrl(array $queryParams): string
     {
         if ($this->url === null) {
-            return URL::createFromServer(['query' => $queryParams]);
+            return Url::fromGlobals(['query' => $queryParams]);
         }
 
         return $this->url . ($queryParams != [] ? '?' . http_build_query($queryParams) : '');
