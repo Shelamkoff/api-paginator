@@ -3,32 +3,21 @@
 namespace Bermuda\Paginator;
 
 use Bermuda\Arrayable;
-use Bermuda\Utils\Url;
+use Bermuda\Paginator\QueryInterface;
 
 class Paginator implements Arrayable
 {
-    private ?string $url = null;
-
     public function __construct(
         private array $results,
         private int $resultsCount,
-        private array $queryParams = []
+        private ?QueryInterface $query = null
     ){
+        if (!$this->query) $this->query = Query::fromGlobals();
     }
-    
+
     public static function createEmpty(): self
     {
         return new static([], 0);
-    }
-
-    /**
-     * @param string $url
-     * @return $this
-     */
-    public function setUrl(string $url): self
-    {
-        $this->url = trim($url, '/?');
-        return $this;
     }
 
     /**
@@ -50,12 +39,12 @@ class Paginator implements Arrayable
     }
 
     /**
-     * @param array $queryParams
+     * @param QueryInterface $query
      * @return $this
      */
-    public function setQueryParams(array $queryParams): self
+    public function setQuery(QueryInterface $query): self
     {
-        $this->queryParams = $queryParams;
+        $this->query = $query;
         return $this;
     }
 
@@ -86,7 +75,7 @@ class Paginator implements Arrayable
         if ($this->results == []) {
             return [];
         }
-        
+
         $data = [
             'count'   => $this->resultsCount,
             'prev'    => $this->getPrevUrl(),
@@ -107,12 +96,9 @@ class Paginator implements Arrayable
      */
     public function getNextUrl():? string
     {
-        $queryParams = $this->queryParams;
-        list($limit, $offset) = $this->parseQueryParams($queryParams);
-
+        list($limit, $offset) = $this->parseQuery();
         if ($this->resultsCount > ($offset = $limit + $offset)) {
-            $queryParams['offset'] = $offset;
-            return $this->buildUrl($queryParams);
+            return $this->query->with('offset', $offset)->toString();
         }
 
         return null;
@@ -123,22 +109,16 @@ class Paginator implements Arrayable
      */
     public function getRange(): array
     {
-        list(, $offset) = $this->parseQueryParams();
-
-        if ($offset == 0) {
-            return [1,  count($this->results)];
-        }
+        list(, $offset) = $this->parseQuery();
+        if ($offset == 0) return [1,  count($this->results)];
 
         return [$offset + 1, $offset + count($this->results)];
     }
 
-    private function parseQueryParams(array $queryParams = null): array
+    private function parseQuery(QueryInterface $query = null): array
     {
-        if ($queryParams === null){
-            $queryParams = $this->queryParams;
-        }
-
-        return [($queryParams['limit'] ?? 10) + 0, ($queryParams['offset'] ?? 0) + 0];
+        if ($query === null) $query = $this->query;
+        return [($query->limit ?? 10) + 0, ($query->offset ?? 0) + 0];
     }
 
     /**
@@ -146,33 +126,19 @@ class Paginator implements Arrayable
      */
     public function getPrevUrl():? string
     {
-        $queryParams = $this->queryParams;
-
-        list($limit, $offset) = $this->parseQueryParams($queryParams);
+        $query = $this->query;
+        list($limit, $offset) = $this->parseQuery($query);
 
         if ($offset != 0) {
             if (($diff = $offset - $limit) > 0) {
-                $queryParams['offset'] = $diff;
+                $query->offset = $diff;
             } elseif ($diff == 0){
-                unset($queryParams['offset']);
+                $query = $query->withod('offset');
             }
 
-            return $this->buildUrl($queryParams);
+            return $query->toString();
         }
 
         return null;
-    }
-
-    /**
-     * @param array $queryParams
-     * @return string
-     */
-    private function buildUrl(array $queryParams): string
-    {
-        if ($this->url === null) {
-            return Url::fromGlobals(['query' => $queryParams]);
-        }
-
-        return $this->url . ($queryParams != [] ? '?' . http_build_query($queryParams) : '');
     }
 }
