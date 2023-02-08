@@ -1,51 +1,79 @@
 <?php
 
-namespace Bermuda\Pagination;
+namespace Bermuda\Paginator;
 
-use Cycle\ORM\Select;
-use Cycle\ORM\SchemaInterface;
+use Bermuda\Url\Url;
+use Bermuda\Url\UrlSegment;
+use Psr\Http\Message\ServerRequestInterface;
 
 class Query implements QueryInterface
 {
     public function __construct(
-        public readonly string $role,
-        protected array $data = [],
+        public readonly Url $url,
+        protected array $queryParams = [],
     ) {
+    }
+
+    public static function fromGlobals(): static
+    {
+        return new static(Url::fromGlobals()->withod('query'), $_GET);
     }
 
     public function __toString(): string
     {
-        return http_build_query($this->data);
+        return http_build_query($this->queryParams);
     }
 
     public function toArray(): array
     {
-        return $this->data;
+        return $this->queryParams;
     }
 
     public function getIterator(): \Generator
     {
-        foreach ($this->data as $prop => $value) yield $prop => $value;
+        foreach ($this->queryParams as $prop => $value) yield $prop => $value;
     }
 
-    public function offsetExists(mixed $offset): bool
+    public function with(string $name, mixed $value): QueryInterface
     {
-        return array_key_exists($offset, $this->data);
+        $copy = clone $this;
+        $copy->queryParams[$name] = $value;
+
+        return $copy;
     }
 
-    public function offsetGet(mixed $offset): mixed
+    public function withod(string $name): QueryInterface
     {
-        return $this->offsetExists($offset) ?
-            $this->data[$offset] : $this->data[$offset] = [];
+        $copy = clone $this;
+        unset($copy->queryParams[$name]);
+
+        return $copy;
     }
 
-    public function offsetSet(mixed $offset, mixed $value): void
+    /**
+     * @param string $name
+     * @return mixed
+     */
+    public function __get(string $name): mixed
     {
-        $this->data[$offset] = $value;
+        return $this->queryParams[$name] ?? null;
     }
 
-    public function offsetUnset(mixed $offset): void
+    public function has(string $name): bool
     {
-        unset($this->data[$offset]);
+        return array_key_exists($name, $this->queryParams);
+    }
+
+    public function toString(): string
+    {
+        return $this->url->withQuery($this->queryParams)->toString();
+    }
+
+    public static function fromRequest(ServerRequestInterface $request): static
+    {
+        return new static(Url::build([
+            UrlSegment::scheme => $request->getUri()->getScheme(),
+            UrlSegment::host => $request->getUri()->getHost()
+        ]), $request->getQueryParams());
     }
 }
