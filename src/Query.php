@@ -71,7 +71,7 @@ class Query implements QueryInterface
 
     public static function fromRequest(ServerRequestInterface $request): static
     {
-        return new static(Url::build([
+        return new static(new Url([
             UrlSegment::scheme => $request->getUri()->getScheme(),
             UrlSegment::host => $request->getUri()->getHost()
         ]), $request->getQueryParams());
