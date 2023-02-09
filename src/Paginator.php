@@ -15,9 +15,9 @@ class Paginator implements Arrayable
         if (!$this->query) $this->query = Query::fromGlobals();
     }
 
-    public static function createEmpty(): self
+    public static function createEmpty(QueryInterface $query = null): self
     {
-        return new static([], 0);
+        return new static([], 0, $query);
     }
 
     /**
