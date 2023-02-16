@@ -79,9 +79,7 @@ class Query implements QueryInterface
         $params = static::mergeDefaults($request->getQueryParams());
 
         foreach (static::getParseCallbacks($request) as $name => $callback) {
-            if (isset($params[$name])) {
-                $query = array_merge($query, $callback($params[$name]));
-            }
+            if (isset($params[$name])) $query[$name] = $callback($params[$name]);
         }
 
         return new static(new Url([
