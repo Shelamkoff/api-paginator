@@ -96,7 +96,7 @@ class Query implements QueryInterface
         return array_merge([self::limit => 10, self::offset => 0], $queryParams);
     }
 
-    protected static function getParseCallbacks(ServerRequestInterface $request): iterable
+    protected static function getParseCallbacks(ServerRequestInterface $request): array
     {
         return [
             static::limit => static function(string $limit) use ($request): array {
