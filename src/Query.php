@@ -4,10 +4,14 @@ namespace Bermuda\Paginator;
 
 use Bermuda\Url\Url;
 use Bermuda\Url\UrlSegment;
+use Bermuda\Paginator\QueryException;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Query implements QueryInterface
 {
+    public const limit = 'limit';
+    public const offset = 'offset';
+    
     public function __construct(
         public readonly Url $url,
         protected array $queryParams = [],
@@ -71,9 +75,44 @@ class Query implements QueryInterface
 
     public static function fromRequest(ServerRequestInterface $request): static
     {
+        $query = [];
+        $params = static::mergeDefaults($request->getQueryParams());
+
+        foreach (static::getParseCallbacks($request) as $name => $callback) {
+            if (isset($params[$name])) {
+                $query = array_merge($query, $callback($params[$name]));
+            }
+        }
+
         return new static(new Url([
+            UrlSegment::host => $request->getUri()->getHost(),
             UrlSegment::scheme => $request->getUri()->getScheme(),
-            UrlSegment::host => $request->getUri()->getHost()
-        ]), $request->getQueryParams());
+            UrlSegment::path => $request->getUri()->getPath(),
+        ]), $query);
+    }
+
+    protected static function mergeDefaults(array $queryParams): array
+    {
+        return array_merge([self::limit => 10, self::offset => 0], $queryParams);
+    }
+
+    protected static function getParseCallbacks(ServerRequestInterface $request): iterable
+    {
+        return [
+            static::limit => static function(string $limit) use ($request): array {
+                if (!is_numeric($limit)) {
+                    throw QueryException::fromRequest($request, '[limit]');
+                }
+                $query[static::limit] = $limit;
+                return $query;
+            },
+            static::offset => static function(string $offset) use ($request): array {
+                if (!is_numeric($offset)) {
+                    throw QueryException::fromRequest($request, '[offset]');
+                }
+                $query[static::offset] = $offset;
+                return $query;
+            },
+        ];
     }
 }
