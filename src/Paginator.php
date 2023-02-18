@@ -131,7 +131,7 @@ class Paginator implements Arrayable
 
         if ($offset != 0) {
             if (($diff = $offset - $limit) > 0) {
-                $query->offset = $diff;
+                $query = $query->with('offset', $diff);
             } elseif ($diff == 0){
                 $query = $query->withod('offset');
             }
