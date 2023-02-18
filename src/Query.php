@@ -4,7 +4,6 @@ namespace Bermuda\Paginator;
 
 use Bermuda\Url\Url;
 use Bermuda\Url\UrlSegment;
-use Bermuda\Paginator\QueryException;
 use Psr\Http\Message\ServerRequestInterface;
 
 /**
@@ -15,7 +14,7 @@ class Query implements QueryInterface
 {
     public const limit = 'limit';
     public const offset = 'offset';
-    
+
     public function __construct(
         public readonly Url $url,
         protected array $queryParams = [],
@@ -82,7 +81,7 @@ class Query implements QueryInterface
         $query = [];
         $params = static::mergeDefaults($request->getQueryParams());
 
-        foreach (static::getParseCallbacks($request) as $name => $callback) {
+        foreach (static::getParseCallbacks() as $name => $callback) {
             if (isset($params[$name])) $query[$name] = $callback($params[$name]);
         }
 
@@ -98,22 +97,20 @@ class Query implements QueryInterface
         return array_merge([self::limit => 10, self::offset => 0], $queryParams);
     }
 
-    protected static function getParseCallbacks(ServerRequestInterface $request): array
+    protected static function getParseCallbacks(): array
     {
         return [
-            static::limit => static function(string $limit) use ($request): array {
+            static::limit => static function(string $limit): int {
                 if (!is_numeric($limit)) {
-                    throw QueryException::fromRequest($request, '[limit]');
+                    throw new QueryException('Query param: ['.static::limit.'] must be a numeric.');
                 }
-                $query[static::limit] = $limit;
-                return $query;
+                return $limit;
             },
-            static::offset => static function(string $offset) use ($request): array {
+            static::offset => static function(string $offset): int {
                 if (!is_numeric($offset)) {
-                    throw QueryException::fromRequest($request, '[offset]');
+                    throw new QueryException('Query param: ['.static::offset.'] must be a numeric.');
                 }
-                $query[static::offset] = $offset;
-                return $query;
+                return $offset;
             },
         ];
     }
