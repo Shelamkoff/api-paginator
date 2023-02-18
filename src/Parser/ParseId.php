@@ -1,6 +1,6 @@
 <?php
 
-namespace Paginator\Query\Parser;
+namespace Bermuda\Paginator\Parser;
 
 final class ParseId
 {
