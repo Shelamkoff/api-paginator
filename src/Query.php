@@ -25,7 +25,7 @@ class Query implements QueryInterface
 
     public function __toString(): string
     {
-        return http_build_query($this->queryParams);
+        return $this->toString();
     }
 
     public function toArray(): array
