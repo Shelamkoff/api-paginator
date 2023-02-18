@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Query\Parser;
+namespace Bermuda\Paginator\Parser;
 
-use App\Query\QueryException;
 use Bermuda\Clock\Clock;
 
 final class DatesParser
