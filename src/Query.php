@@ -7,6 +7,10 @@ use Bermuda\Url\UrlSegment;
 use Bermuda\Paginator\QueryException;
 use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * @property-read int $limit
+ * @property-read int $offset
+ */
 class Query implements QueryInterface
 {
     public const limit = 'limit';
