@@ -24,7 +24,7 @@ interface QueryInterface extends Arrayable,
      * @param string $name
      * @return QueryInterface
      */
-    public function withod(string $name): QueryInterface ;
+    public function without(string $name): QueryInterface ;
 
     /**
      * @param string $name
