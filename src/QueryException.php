@@ -2,7 +2,7 @@
 
 namespace Bermuda\Paginator\Query;
 
-use Bermuda\HTTP\BadRequestException;
+use Bermuda\HTTP\Exception\BadRequestException;
 
 class QueryException extends BadRequestException
 {
