@@ -4,7 +4,6 @@ namespace Bermuda\Paginator;
 
 use Bermuda\Arrayable;
 use Bermuda\DataObj;
-use Bermuda\Paginator\QueryInterface;
 use Bermuda\Url\Url;
 use Bermuda\Url\UrlSegment;
 
