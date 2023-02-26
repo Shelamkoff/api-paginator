@@ -3,21 +3,39 @@
 namespace Bermuda\Paginator;
 
 use Bermuda\Arrayable;
+use Bermuda\DataObj;
 use Bermuda\Paginator\QueryInterface;
+use Bermuda\Url\Url;
+use Bermuda\Url\UrlSegment;
 
 class Paginator implements Arrayable
 {
+    private DataObj $query;
+
     public function __construct(
         private array $results,
         private int $resultsCount,
-        private ?QueryInterface $query = null
+        private ?Url $url = null,
     ){
-        if (!$this->query) $this->query = Query::fromGlobals();
+        if (!$this->url) $this->url = Url::fromGlobals();
+        if ($this->url->query) $query = parse_str($this->url->query);
+
+        $this->query = new DataObj($query ?? []);
+    }
+
+    /**
+     * @param Url $url
+     * @return $this
+     */
+    public function setUrl(Url $url): self
+    {
+        $this->url = $url;
+        return $this;
     }
 
     public static function createEmpty(QueryInterface $query = null): self
     {
-        return new static([], 0, $query);
+        return new static([], 0, null, $query);
     }
 
     /**
@@ -42,11 +60,6 @@ class Paginator implements Arrayable
      * @param QueryInterface $query
      * @return $this
      */
-    public function setQuery(QueryInterface $query): self
-    {
-        $this->query = $query;
-        return $this;
-    }
 
     /**
      * @param int $resultsCount
@@ -96,9 +109,11 @@ class Paginator implements Arrayable
      */
     public function getNextUrl():? string
     {
+        $query = clone $this->query;
         list($limit, $offset) = $this->parseQuery();
         if ($this->resultsCount > ($offset = $limit + $offset)) {
-            return $this->query->with('offset', $offset)->toString();
+            $query->set('offset', $offset);
+            return $this->url->withQuery($query->toArray())->toString();
         }
 
         return null;
@@ -115,7 +130,7 @@ class Paginator implements Arrayable
         return [$offset + 1, $offset + count($this->results)];
     }
 
-    private function parseQuery(QueryInterface $query = null): array
+    private function parseQuery(DataObj $query = null): array
     {
         if ($query === null) $query = $this->query;
         return [($query->limit ?? 10) + 0, ($query->offset ?? 0) + 0];
@@ -126,17 +141,15 @@ class Paginator implements Arrayable
      */
     public function getPrevUrl():? string
     {
-        $query = $this->query;
+        $query = clone $this->query;
         list($limit, $offset) = $this->parseQuery($query);
 
         if ($offset != 0) {
-            if (($diff = $offset - $limit) > 0) {
-                $query = $query->with('offset', $diff);
-            } elseif ($diff == 0){
-                $query = $query->withod('offset');
-            }
+            if (($diff = $offset - $limit) > 0) $query = $query->set('offset', $diff);
+            elseif ($diff == 0) $query->offsetUnset('offset');
 
-            return $query->toString();
+            $this->query->set('offset', $offset);
+            return $this->url->withQuery($this->query->toArray())->toString();
         }
 
         return null;
