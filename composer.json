@@ -7,6 +7,7 @@
         "bermudaphp/arrayable": "^1.2.2",
         "bermudaphp/clock": "^1.0",
         "bermudaphp/url": "^1.0",
+        "bermudaphp/data-object": "^1.0",
         "bermudaphp/http-exception": "^1.0",
         "psr/http-message": "^1.0.1"
     },
