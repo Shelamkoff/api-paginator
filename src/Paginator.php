@@ -7,17 +7,18 @@ use Bermuda\DataObj;
 use Bermuda\Url\Url;
 use Bermuda\Url\UrlSegment;
 
-class Paginator implements Arrayable
+final class Paginator implements Arrayable
 {
     private DataObj $query;
+    public readonly Url $url;
 
     public function __construct(
-        private array $results,
-        private int $resultsCount,
-        private ?Url $url = null,
+        public readonly array $results,
+        public readonly int $resultsCount,
+        ?Url $url = null,
     ){
-        if (!$this->url) $this->url = Url::fromGlobals();
-        if ($this->url->query) $query = parse_str($this->url->query);
+        $this->url = $url ? $url : Url::fromGlobals();
+        if ($this->url->query) parse_str($this->url->query, $query);
 
         $this->query = new DataObj($query ?? []);
     }
