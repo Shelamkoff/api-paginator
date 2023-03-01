@@ -2,10 +2,9 @@
 
 namespace Bermuda\Paginator;
 
-use Bermuda\Arrayable;
-use Bermuda\DataObj;
 use Bermuda\Url\Url;
-use Bermuda\Url\UrlSegment;
+use Bermuda\DataObj;
+use Bermuda\Arrayable;
 
 final class Paginator implements Arrayable
 {
