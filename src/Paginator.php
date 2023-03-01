@@ -32,9 +32,9 @@ class Paginator implements Arrayable
         return $this;
     }
 
-    public static function createEmpty(QueryInterface $query = null): self
+    public static function createEmpty(): self
     {
-        return new static([], 0, null, $query);
+        return new static([], 0);
     }
 
     /**
