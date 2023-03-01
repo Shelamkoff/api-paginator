@@ -4,7 +4,7 @@ namespace Bermuda\Paginator\Query;
 
 use Bermuda\HTTP\Exception\BadRequestException;
 
-class QueryException extends BadRequestException
+class ParserException extends BadRequestException
 {
     public function __construct(string $reasonPhrase = null)
     {
