@@ -16,7 +16,7 @@ final class Paginator implements Arrayable
         public readonly array $results,
         public readonly int $resultsCount,
         ?Url $url = null,
-    ){
+    ) {
         $this->url = $url ? $url : Url::fromGlobals();
         if ($this->url->query) parse_str($this->url->query, $query);
 
