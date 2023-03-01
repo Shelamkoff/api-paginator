@@ -22,29 +22,9 @@ class Paginator implements Arrayable
         $this->query = new DataObj($query ?? []);
     }
 
-    /**
-     * @param Url $url
-     * @return $this
-     */
-    public function setUrl(Url $url): self
-    {
-        $this->url = $url;
-        return $this;
-    }
-
     public static function createEmpty(): self
     {
         return new static([], 0);
-    }
-
-    /**
-     * @param array $results
-     * @return $this
-     */
-    public function setResults(array $results): self
-    {
-        $this->results = $results;
-        return $this;
     }
 
     /**
@@ -56,33 +36,9 @@ class Paginator implements Arrayable
     }
 
     /**
-     * @param QueryInterface $query
-     * @return $this
-     */
-
-    /**
-     * @param int $resultsCount
-     * @return $this
-     */
-    public function setResultsCount(int $resultsCount): self
-    {
-        $this->resultsCount = $resultsCount;
-        return $this;
-    }
-
-    /**
      * @return array
      */
     public function toArray(): array
-    {
-        return $this->paginate();
-    }
-
-    /**
-     * @param array|null $mergeData
-     * @return array
-     */
-    public function paginate(array $mergeData = null): array
     {
         if ($this->results == []) {
             return [];
@@ -129,12 +85,6 @@ class Paginator implements Arrayable
         return [$offset + 1, $offset + count($this->results)];
     }
 
-    private function parseQuery(DataObj $query = null): array
-    {
-        if ($query === null) $query = $this->query;
-        return [($query->limit ?? 10) + 0, ($query->offset ?? 0) + 0];
-    }
-
     /**
      * @return string|null
      */
@@ -152,5 +102,11 @@ class Paginator implements Arrayable
         }
 
         return null;
+    }
+    
+    private function parseQuery(DataObj $query = null): array
+    {
+        if ($query === null) $query = $this->query;
+        return [($query->limit ?? 10) + 0, ($query->offset ?? 0) + 0];
     }
 }
