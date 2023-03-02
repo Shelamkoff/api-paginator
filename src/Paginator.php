@@ -1,10 +1,6 @@
 <?php
 
-namespace Bermuda\Paginator;
-
-use Bermuda\Url\Url;
-use Bermuda\DataObj;
-use Bermuda\Arrayable;
+namespace Bermuda\Stdlib\Paginator;
 
 final class Paginator implements Arrayable
 {
