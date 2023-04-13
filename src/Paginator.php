@@ -47,11 +47,7 @@ final class Paginator implements Arrayable
             'range'   => $this->getRange(),
             'results' => $this->results
         ];
-
-        if ($mergeData != null) {
-            return array_merge($mergeData, $data);
-        }
-
+        
         return $data;
     }
 
