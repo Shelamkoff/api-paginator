@@ -1,6 +1,6 @@
 <?php
 
-namespace Bermuda\Stdlib\Paginator;
+namespace Bermuda\Stdlib;
 
 final class Paginator implements Arrayable
 {
