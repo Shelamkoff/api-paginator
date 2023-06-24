@@ -87,10 +87,9 @@ final class Paginator implements Arrayable
 
         if ($offset != 0) {
             if (($diff = $offset - $limit) > 0) $query = $query->set('offset', $diff);
-            elseif ($diff == 0) $query->offsetUnset('offset');
+            else $query->offsetUnset('offset');
 
-            $this->query->set('offset', $offset);
-            return $this->url->withQuery($this->query->toArray())->toString();
+            return $this->url->withQuery($query->toArray())->toString();
         }
 
         return null;
